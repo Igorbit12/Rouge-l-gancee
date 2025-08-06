@@ -9,7 +9,7 @@ const manualProducts = [
     description: "Batom de longa duração com acabamento matte.",
     api_featured_image: "primeira.png", // Caminho relativo
     category: "maquiagem",
-    stock: 12, // Estoque adicionado
+    stock: 13, // Estoque adicionado
   },
   {
     name: "Base Líquida Clara",
@@ -26,7 +26,7 @@ const manualProducts = [
     price: "34.90",
     description: "Rímel resistente à água com efeito de volume.",
     api_featured_image: "3.png",
-    category: "maquiagem",
+    category: "bases",
     stock: 12, // Estoque adicionado
   },
    {
@@ -35,7 +35,7 @@ const manualProducts = [
     price: "45.00",
     description: "Cobertura leve com acabamento natural.",
     api_featured_image: "2.png",
-    category: "maquiagem",
+    category: "batom",
     stock: 12, // Estoque adicionado
   },
    {
@@ -44,7 +44,7 @@ const manualProducts = [
     price: "45.00",
     description: "Cobertura leve com acabamento natural.",
     api_featured_image: "2.png",
-    category: "maquiagem",
+    category: "sombras",
     stock: 12, // Estoque adicionado
   },
    {
@@ -53,7 +53,7 @@ const manualProducts = [
     price: "45.00",
     description: "Cobertura leve com acabamento natural.",
     api_featured_image: "2.png",
-    category: "maquiagem",
+    category: "iluminador",
     stock: 12, // Estoque adicionado
   },
    {
@@ -140,9 +140,25 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchProducts(manualProducts); // renderiza ao carregar página
 });
 
+const stockClass = (product.stock !== undefined && product.stock < 3) ? "product-stock low-stock" : "product-stock";
+
+const card = `
+  <div class="card">
+    <img class="product-image" src="${product.api_featured_image}" alt="${product.name}">
+    <div class="card-content">
+      <h3 class="product-name">${product.name}</h3>
+      <p class="${stockClass}">Estoque: ${product.stock ?? "Indisponível"}</p>
+      <div class="card-footer">
+        <p class="product-price">R$ ${parseFloat(product.price || 0).toFixed(2)}</p>
+        <p class="product-insta-msg">Peça no <a href="https://instagram.com/seuusuario" target="_blank">Instagram</a></p>
+      </div>
+    </div>
+  </div>
+`;
+
 // Função principal de renderização dos produtos
 function fetchProducts(products) {
-  const container = document.querySelector(".container");
+  const container = document.querySelector("main.container");
   container.innerHTML = "";
 
   let currentPage = parseInt(sessionStorage.getItem("currentPage")) || 1;
@@ -150,21 +166,29 @@ function fetchProducts(products) {
   const productsToShow = products.slice((currentPage - 1) * 9, currentPage * 9);
 
   productsToShow.forEach(product => {
+    // Define a classe do estoque conforme quantidade
+    let stockClass = "product-stock";
+    if (product.stock === 0) {
+      stockClass += " out-of-stock";   // cinza
+    } else if (product.stock < 3) {
+      stockClass += " low-stock";      // laranja
+    } else {
+      stockClass += " in-stock";       // vermelho padrão
+    }
+
     const card = `
-  <div class="card">
-    <img class="product-image" src="${product.api_featured_image}" alt="${product.name}">
-    <div class="card-content">
-      <h3 class="product-name">${product.name}</h3>
-      <div class="card-footer">
-        <p class="product-price">R$ ${parseFloat(product.price || 0).toFixed(2)}</p>
-        <p class="product-stock">Estoque: ${product.stock || 0} unidades</p>
-<p class="product-insta-msg">Peça no <a href="https://instagram.com/seuusuario" target="_blank">Instagram</a></p>
-
+      <div class="card">
+        <img class="product-image" src="${product.api_featured_image}" alt="${product.name}">
+        <div class="card-content">
+          <h3 class="product-name">${product.name}</h3>
+          <p class="${stockClass}">Estoque: ${product.stock ?? "Indisponível"} unidades</p>
+          <div class="card-footer">
+            <p class="product-price">R$ ${parseFloat(product.price || 0).toFixed(2)}</p>
+            <p class="product-insta-msg">Peça no <a href="https://instagram.com/seuusuario" target="_blank">Instagram</a></p>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-`;
-
+    `;
 
     container.insertAdjacentHTML("beforeend", card);
 
@@ -285,3 +309,4 @@ function closeModal() {
   backdrop.classList.remove("display");
   if (modal) modal.remove();
 }
+
