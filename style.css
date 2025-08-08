@@ -26,7 +26,6 @@ header {
   font-weight: 700;
   box-shadow: 0 3px 8px rgba(204, 51, 102, 0.5);
   position: sticky;
-  top: 0;
   z-index: 100;
   user-select: none;
 }
